@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { GetCurrentDateSTR } from "../common/GetCurrentDate";
 import { directionRepo } from "../repositories/DirectionRepository";
+import DirectionService from "../services/DirectionService";
 
 export async function GetAllDirectionsController(request: Request, response: Response){
 
@@ -99,6 +100,32 @@ export async function GetAllDirectionPerCoopIdController(request: Request, respo
             message: "Error in getting all directions: "+e,
             dateTime: responseDate,
         }]})
+    }
+
+}
+
+export async function GetDirectionByCoopIdAndFilterController(request : Request, response : Response){
+
+    try{
+
+        const data = await DirectionService.FilterGetDataPerCoopId(request.params.coopId, request.body.fromDate, request.body.toDate, request.body.filterType, request.body.filterData)
+        console.log(data)
+        response.status(200).json({messages : [{
+            code: data.status,
+            message: data.message,
+            dateTime: GetCurrentDateSTR(),
+        }],
+        response: data.response
+        });
+
+    }catch(e){
+        response.status(500).json({messages : [{
+            code: "500",
+            message: "Internal server error: "+e,
+            dateTime: GetCurrentDateSTR(),
+            }],
+            response: {}
+        })
     }
 
 }

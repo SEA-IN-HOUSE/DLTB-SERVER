@@ -48,6 +48,21 @@ class StationService{
             return {status: 500, message: e, response: {}}
         }
     }
+    
+    async GetDataPerCoopIdAndRouteId(coopId : string, routeId: string){
+
+        try{
+
+            const data = await StationRepository.GetDataPerCoopIdAndRouteId(coopId, routeId)
+
+            return {status: 0, message: "OK", response: data}
+
+        }catch(e){
+            console.error("Error in services: "+e);
+            return {status: 500, message: e, response: {}}
+        }
+
+    }
 }
 
 export default new StationService();

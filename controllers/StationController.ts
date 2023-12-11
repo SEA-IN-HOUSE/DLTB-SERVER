@@ -91,3 +91,31 @@ try{
 }
 
 }
+
+export async function GetStationPerCoopIdAndRouteIdController(request: Request, response : Response){
+
+    
+try{
+    const data = await StationService.GetDataPerCoopIdAndRouteId(request.params.coopId, request.params.routeId);
+    response.status(200).json({messages : [{
+        code: data.status,
+        message: data.message,
+        dateTime: GetCurrentDateSTR(),
+        }],
+        response : data.response
+    })
+
+
+   
+
+}catch(e){
+    response.status(500).json({messages : [{
+        code: "212",
+        message: "Error in getting all employees: "+e,
+        dateTime: GetCurrentDateSTR(),
+    }],
+    response:{}
+});
+}
+
+}

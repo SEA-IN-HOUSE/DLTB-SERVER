@@ -80,6 +80,7 @@ class MasterCardRepository{
 
             const searchCardId : IMasterCard | null = await masterCardModel.findOne({ "cardID": cardId, "coopId": coopId });
 
+            console.log(`SEARCH CARD ID HERE: ${searchCardId}`)
 
             if(searchCardId){
                 return searchCardId.balance;
@@ -110,8 +111,10 @@ class MasterCardRepository{
             const decreaseBalancePerId = await  masterCardModel.updateOne({"cardID": cardId, "coopId" :coopId.trim()}, {$inc: {"balance": -decreaseAmount}} , {new: true});
 
             console.log(`MODIFIED COUNT ${decreaseBalancePerId.modifiedCount}`)
+
+            let numberOfModifiedAccount : number = decreaseBalancePerId.modifiedCount + increaseBalancePerId.modifiedCount;
             
-            return decreaseBalancePerId.modifiedCount;
+            return numberOfModifiedAccount;
 
         }catch(e){
 

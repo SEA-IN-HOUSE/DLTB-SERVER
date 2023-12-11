@@ -55,6 +55,7 @@ const adminPageSchema = new mongoose.Schema({
     dateCreated:{
         type: Date,
         default: () => new Date(),
+        index: true,
     }
 
 });

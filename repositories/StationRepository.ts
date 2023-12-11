@@ -79,6 +79,23 @@ class StationRepository{
 
     }
 
+    async GetDataPerCoopIdAndRouteId(coopId : string, routeId: string){
+
+      try{
+
+          const employee = await StationModel.find({'routeId':routeId,'coopId' : coopId})
+
+          return employee
+
+      }catch(e){
+         
+          console.error("Repository error: "+e);
+          return false;
+          
+      }
+
+  }
+
 }
 
 export default new StationRepository();

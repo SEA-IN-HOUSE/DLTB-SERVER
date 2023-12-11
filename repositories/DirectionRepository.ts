@@ -23,6 +23,13 @@ interface IDirections{
 
 }
 
+interface QueryFilter {
+    coopId: string;
+    dateCreated:  any
+    [key: string]: string | Date | { $gte: Date } | { $lte: Date } | undefined;
+}
+
+
 class Directions{
 
     async GetAllDirections(){
@@ -97,6 +104,54 @@ class Directions{
         }
 
     }
+
+    async GetDataPerCoopIdAndDateRange(coopId : string, fromDate : string, toDate : string) {
+        try {
+            const data = await DirectionModel.find({
+                "coopId": coopId,
+                "dateCreated": {
+                    $gte: new Date(fromDate), // $gte means "greater than or equal to"
+                    $lte: new Date(toDate)    // $lte means "less than or equal to"
+                }
+            });
+    
+            return data;
+        } catch (e) {
+            console.error(`Error in repository: ${e}`);
+            return null;
+        }
+    }
+
+    async FilterGetDataPerCoopId(coopId: string, fromDate: string | null, toDate: string | null, filterType: string | null, filterData: any | null) {
+        try {
+
+            console.log(`TODATE ${toDate}`)
+            console.log(`FROM DATE ${fromDate}`)
+            let query: any = {
+                coopId: coopId,
+            };
+
+    
+            if (fromDate !== null && toDate !== null) {
+                query.dateCreated = {
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
+            }
+    
+            if (filterType !== null && filterData !== null && filterType !== "None" && filterData !== "") {
+                query[filterType] = filterData;
+            }
+    
+            const data = await DirectionModel.find(query);
+    
+            return data;
+        } catch (e) {
+            console.error(`Error in repository: ${e}`);
+            return null;
+        }
+    }
+    
 
 }
 

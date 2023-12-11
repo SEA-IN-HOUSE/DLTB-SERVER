@@ -56,13 +56,13 @@ const stationSchema = new mongoose.Schema({
 
     createdAt: {
         type: Date,
-        default: new Date,
+        default: () => new Date,
         index: true
     },
 
     updatedAt :{
         type: Date,
-        default: new Date,
+        default: () => new Date,
         index: true
     }
 

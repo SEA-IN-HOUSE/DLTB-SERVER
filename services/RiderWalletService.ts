@@ -142,16 +142,22 @@ class RiderWalletService {
                         // decrease = 0
                         // increase = 1000
                         console.log("HERE")
-                        if(decreaseAmount <=  findCardIdInMasterCard.balance || isNegative === true || decreaseAmount === 0){
+                        if(decreaseAmount <=  findCardIdInMasterCard.balance || isNegative === true || decreaseAmount === 0 || increaseAmount >=0){
                             const updateBalance : any = await MasterCardRepository.UpdateMasterCardBalanceByCardId(cardId, decreaseAmount, increaseAmount, coopId);
-                      
+                            
+                            
 
                             if(updateBalance > 0){
+
                                 const newBalance  = await MasterCardRepository.GetCurrentBalancePerCardId(cardId,coopId);
+
+                                console.log(`NEW BALANCE: ${newBalance}`)
+
                                 return {status: 0, message: "OK", response: {
                                     "previousBalance" : currentBalance,
                                     "newBalance" : newBalance
                                 }}
+
                             }else{
                                 return {status: 1, message: "Card is not valid", response: {}}
                             }
