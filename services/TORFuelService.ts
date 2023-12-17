@@ -171,9 +171,12 @@ class TORFuelService{
         }
     }
 
-     /////////////////////////////////////
+    
+
+        
+    /////////////////////////////////////
  
-     async GenerateSession(){
+    async GenerateSession(){
         
         let usernameCred = "filipay";
         let passwordCred ="";
@@ -226,6 +229,128 @@ class TORFuelService{
             }catch(e){
                 console.error("Error in endsession service: "+e);
                 return false;
+            }
+    
+        }
+    
+        async SyncDataByCoopid(coopId: string){
+    
+            console.log(`Coop id: ${coopId}`)
+            try{
+    
+                const data = await TORFuelRepository.GetDataIsNotUploaded(coopId);
+    
+                
+                console.log(`TORS : ${data}`)
+    
+                if(data !== null){
+    
+                    const insertTor = await this.InsertToFileMaker(data);
+    
+                    if(insertTor.status === 0){
+                        return {status: 0, message: "OK", response: data}
+                    }else{
+                        return {status: 1, message: "Invalid UUID", response: {}} 
+                    }
+                }else{
+                    return {status: 1, message: "Invalid UUID", response: {}}
+                }
+    
+            }catch(e){
+                console.error(`Error in services: ${e}`);
+                return {status: 500, message: e, response: {}}
+            }
+        }
+    
+        // DLTB_API_CREATE_TOR
+        async InsertToFileMaker(tors : any){
+            
+            try{
+    
+                const token = await this.GenerateSession();
+    
+                console.log(`TOKEN: ${token}`)
+            
+                const config = {
+                    headers :{
+                        Authorization : `Bearer ${token}`
+                    }
+                }
+        
+                tors.map(async (tor: any) => {
+    
+                   
+                    try {
+                        
+                        // "fieldData": {
+                        //     "UUID": "ab91cc01-0059-47db-9ad5-a9066ceabcde",
+                        //     "device_id": "ab35271806004845",
+                        //     "control_no": "25102142020000008",
+                        //     "tor_no": "251-200514-0856",
+                        //     "date_of_trip": "05/14/2020",
+                        //     "bus_no": "251",
+                        //     "route": "PITX-NASUGBU",
+                        //     "route_code": "NAS",
+                        //     "bound": "NORTH",
+                        //     "trip_no": 1,
+                        //     "refuel_date": "2019-12-23 09:39:05.000000",
+                        //     "refuel_time": "2019-12-23 09:39:05.000000",
+                        //     "fuel_station": "LRT NEW TANK",
+                        //     "fuel_liters": 100.0,
+                        //     "fuel_amount": 0.0,
+                        //     "fuel_price_per_liter": 0.0,
+                        //     "fuel_attendant": "DESTREZA, ALAN C.",
+                        //     "full_tank": "",
+                        //     "timestamp": "2019-12-23 09:05:35.000000",
+                        //     "lat": "14.076688",
+                        //     "long": "120.866036",
+                        //     "remarks": ""
+                        // }
+
+    
+                        const bodyParameters : any = {
+                            fieldData: {
+                                "UUID":tor.fieldData.UUID,
+                                "device_id":tor.fieldData.device_id,
+                                "control_no":tor.fieldData.control_no,
+                                "tor_no":tor.fieldData.tor_no,
+                                "date_of_trip":tor.fieldData.date_of_trip,
+                                "bus_no":tor.fieldData.bus_no,
+                                "route":tor.fieldData.route,
+                                "route_code":tor.fieldData.route_code,
+                                "bound":tor.fieldData.bound,
+                                "trip_no":tor.fieldData.trip_no,
+                                "refuel_date":tor.fieldData.refuel_date,
+                                "refuel_time":tor.fieldData.refuel_time,
+                                "fuel_station":tor.fieldData.fuel_station,
+                                "fuel_liters":tor.fieldData.fuel_liters,
+                                "fuel_amount":tor.fieldData.fuel_amount,
+                                "fuel_price_per_liter":tor.fieldData.fuel_price_per_liter,
+                                "fuel_attendant":tor.fieldData.fuel_attendant,
+                                "full_tank":tor.fieldData.full_tank,
+                                "timestamp":tor.fieldData.timestamp,
+                                "lat":tor.fieldData.lat,
+                                "long":tor.fieldData.long,
+                                "remarks":tor.fieldData.remarks
+                            }
+                        };
+                
+                        const request = await axios.post(`${process.env.DLTB_API_CREATE_TOR}/tor_fuel/records`, bodyParameters, config);
+    
+                        
+                        
+                    } catch (e) {
+                        console.log(`Error in inserting tor ${e}`);
+                    }
+                    const updateStatusOfTor = await TORFuelRepository.UpdateIsUploaded(tor.fieldData.id, true);
+                });
+    
+                const deleteToken = await this.EndSession(token);
+    
+                return {status: 0, message: "OK", response: deleteToken}
+            }catch(e){
+                console.error(`Error in services: ${e}`);
+                return {status: 500, message: e, response: {}}
             }
     
         }

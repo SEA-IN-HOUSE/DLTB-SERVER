@@ -33,22 +33,33 @@ class MasterCardRepository{
         }
     }
 
-    async CreateNewMasterCard(masterCard : IMasterCard){
+    async CreateNewMasterCard(masterCard: IMasterCard) {
+        try {
+            if (masterCard.balance <= 500000 && masterCard.balance >= 0) {
+                const getData = (await masterCardModel.find({})).length + 1;
+                const lastString = `000${getData}`.slice(-4); // Ensure the last 4 characters
         
-        try{
-
-            const newMasterCard = new masterCardModel(masterCard);
-
-            const saveMasterCard = await newMasterCard.save();
-
-            return true;
-
-        }catch(e){
-            console.error("Error in repository: "+e);
-            return e;
+                const currentYear = new Date().getFullYear();
+    
+                // SNO EXAMPLE = SNMC2023-0001
+                const newSNo = `SNMC${currentYear}-${lastString}`;
+    
+                masterCard.sNo = newSNo;
+    
+                const newMasterCard = new masterCardModel(masterCard);
+    
+                const saveMasterCard = await newMasterCard.save();
+    
+                return true;
+            } else {
+                return 1;
+            }
+        } catch (e) {
+            console.error("Error in repository: " + e);
+            return null;
         }
-
     }
+    
 
     async FindCardIdInMasterCard( cardId : string , coopId : string) : Promise<IMasterCard | boolean | string> {
     
@@ -98,41 +109,56 @@ class MasterCardRepository{
 
     }
 
-    async UpdateMasterCardBalanceByCardId( cardId : string, decreaseAmount : Number, increaseAmount : Number, coopId: string){
-
-        try{
-            console.log(`INCREASE ${increaseAmount}`)
-            console.log(`DECREASE ${decreaseAmount}`)
-            console.log(`CARD ID ${cardId}`)
-            console.log(`COOP ID ${coopId}`)
-
-            const increaseBalancePerId = await masterCardModel.updateOne({"cardID": cardId, "coopId": coopId.trim()}, {$inc: {"balance": increaseAmount}} , {new: true});
-
-            const decreaseBalancePerId = await  masterCardModel.updateOne({"cardID": cardId, "coopId" :coopId.trim()}, {$inc: {"balance": -decreaseAmount}} , {new: true});
-
-            console.log(`MODIFIED COUNT ${decreaseBalancePerId.modifiedCount}`)
-
-            let numberOfModifiedAccount : number = decreaseBalancePerId.modifiedCount + increaseBalancePerId.modifiedCount;
-            
-            return numberOfModifiedAccount;
-
-        }catch(e){
-
+    async UpdateMasterCardBalanceByCardId(cardId: string, decreaseAmount: number, increaseAmount: number, coopId: string) {
+        try {
+            const currentBalance = await this.GetCurrentBalancePerCardId(cardId, coopId);
+    
+            if (currentBalance !== null) {
+                const newBalance = currentBalance - decreaseAmount + increaseAmount;
+    
+                if (newBalance <= 500000) {
+                    const increaseBalancePerId = await masterCardModel.updateOne(
+                        { "cardID": cardId, "coopId": coopId.trim() },
+                        { $inc: { "balance": increaseAmount } },
+                        { new: true }
+                    );
+    
+                    const decreaseBalancePerId = await masterCardModel.updateOne(
+                        { "cardID": cardId, "coopId": coopId.trim() },
+                        { $inc: { "balance": -decreaseAmount } },
+                        { new: true }
+                    );
+    
+                    console.log(`MODIFIED COUNT ${decreaseBalancePerId.modifiedCount}`);
+    
+                    const numberOfModifiedAccount: number = decreaseBalancePerId.modifiedCount + increaseBalancePerId.modifiedCount;
+    
+                    return numberOfModifiedAccount;
+                } else {
+                    console.log("Balance limit exceeded.");
+                    return "Balance limit exceeded";
+                }
+            } else {
+                console.log("Card not found");
+                return "Card not found";
+            }
+        } catch (e) {
             console.log(`Error in repository ${e}`);
             return e;
-
         }
-
     }
+    
 
     async  UpdateField() {
         try {
-          await masterCardModel.updateMany({}, { $rename: { 'cardID': 'cardID' } });
+          await masterCardModel.updateMany({}, { $rename: { 'cardID': 'cardID' } });+
           console.log('Field updated successfully.');
         } catch (error) {
           console.error('Error updating field:', error);
         }
       }
+
+
 
 
 }

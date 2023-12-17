@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CheckTokenMiddleware } from "../middlewares/CheckTokenMiddleware";
-import { CreateTORRemittanceController, GetAllRemittanceController, GetTORRemittanceByCoopIdAndDateController, GetTORRemittancePerCoopIdController, SyncGetAllTORRemittanceController } from "../controllers/TORRemittanceController";
+import { CreateTORRemittanceController, GetAllRemittanceController, GetTORRemittanceByCoopIdAndDateController, GetTORRemittancePerCoopIdController, SyncGetAllTORRemittanceController, SyncToFileMakerTORRemittanceController } from "../controllers/TORRemittanceController";
 
 const TORRemittanceRouter = Router();
 
@@ -16,5 +16,7 @@ TORRemittanceRouter.post('/tor/remittance/:id', CheckTokenMiddleware, GetTORRemi
 
 
 TORRemittanceRouter.post('/tor/remittance/filter/:id', CheckTokenMiddleware, GetTORRemittancePerCoopIdController)
+
+TORRemittanceRouter.get('/tor/remittance/sync/:coopId', CheckTokenMiddleware, SyncToFileMakerTORRemittanceController);
 
 export default TORRemittanceRouter;

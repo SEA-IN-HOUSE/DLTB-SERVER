@@ -82,8 +82,8 @@ export async function AddNewMasterCardController(request: Request, response: Res
         console.log(newMasterCard)
 
         response.status(200).json({messages : [{
-            code: "0",
-            message: "OK",
+            code: newMasterCard?.status,
+            message: newMasterCard?.message,
             dateTime: responseDate,
             }],
             response: {}

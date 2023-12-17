@@ -1,7 +1,6 @@
 import axios from "axios";
 import TORMainRepository from "../repositories/TORMainRepository";
 import { TOREndSessionService, TORGenerateSessionService } from "./SessionService";
-import SummaryTicketModel, { ISummaryTicket } from "../models/SummaryTicketModel";
 import SummaryTicketService from "./SummaryTicketService";
 
 
@@ -255,6 +254,8 @@ class TORMainService{
     }
 
   
+    
+
     async GetAllTORMainFromServer(){
 
         try{
@@ -458,75 +459,235 @@ class TORMainService{
     }
 
 
-    async SyncTORMainService(){
 
-        try {
-            const torMains = await TORMainRepository.GetAllTORMain();
+
     
-            if (torMains && Array.isArray(torMains)) {
-                for (const torMain of torMains) {
-                    if (torMain.fieldData && Array.isArray(torMain.fieldData) && torMain.fieldData.length > 0) {
-                        for (const fieldData of torMain.fieldData) {
-                            if (await this.CheckIfUUIDAllowedToInsertService(fieldData)) {
-                                // const request = await this.CreateTORMAinToOtherServerService(fieldData);
-                            } else {
-                                console.log("UUID NOT ALLOWED TO INSERT");
-                            }
-                        }
-                    } 
-                }
-            } else {
-                console.log("No torMains found or it's not an array.");
-            }
-        } catch (e) {
-            console.error("Error in sync tor main service: " + e);
-            return { status: 500, message: "Error in sync tor main service: " + e };
+    /////////////////////////////////////
+ 
+    async GenerateSession(){
+        
+        let usernameCred = "filipay";
+        let passwordCred ="";
+    
+        // if(process.env.USERNAME){
+        //     usernameCred = process.env.USERNAME;
+        // }
+    
+        if(process.env.PASSWORD){
+            passwordCred = process.env.PASSWORD;
         }
-
-    }
-
-
-
-    async CheckIfUUIDAllowedToInsertService(UUID : string){
+        
+        console.log("Username credentials " + usernameCred);
     
-        try{
-
-            const token = await TORGenerateSessionService();
-
-            const config = {
-                headers :{
-                    Authorization : `Bearer ${token}`
+        console.log("Password credential " + passwordCred);
+    
+            try{
+                
+                const generateSession = await axios.post("https://s037817.fmphost.com/fmi/data/v1/databases/filipay_torData/sessions/", {},{
+                    auth: {
+                        username: usernameCred,
+                        password: passwordCred,
+                    }
+                })
+    
+                const token = await generateSession.data.response.token;
+    
+                return token
+            }catch(e){
+                console.error("Error in generating session token " + e)
+                return false
+            }
+        }
+    
+        async EndSession( token: string | boolean ){
+    
+            try{
+    
+                const endSession = await axios.delete("https://s037817.fmphost.com/fmi/data/v1/databases/filipay_torData/sessions/"+token);
+    
+                const response = await endSession.data;
+           
+                if(response.messages.code === "0"){
+                    return true;
+                }else{
+                    return false;
                 }
-            }
-            
-            const bodyParameters = {
-                "query": [{"UUID": UUID}]
-            }
-
-            const url = `https://s037817.fmphost.com/fmi/data/v1/databases/filipay_torData/layouts/tor_main/_find`;
-
-            const request = await axios.post(url , bodyParameters, config);
-
-            const deleteToken = await TOREndSessionService(token);
-
-            const response = request.data;
-
-            if(response.response.dataInfo.returnedCount < 0){
-                return true;
-            }else{
+        
+    
+            }catch(e){
+                console.error("Error in endsession service: "+e);
                 return false;
             }
-            
-       
-
-
-        }catch(e){
-
-            return true;
-
+    
         }
-
-    }
+    
+        async SyncDataByCoopid(coopId: string){
+    
+            console.log(`Coop id: ${coopId}`)
+            try{
+    
+                const data = await TORMainRepository.GetDataIsNotUploaded(coopId);
+    
+                
+                console.log(`TORS : ${data}`)
+    
+                if(data !== null){
+    
+                    const insertTor = await this.InsertToFileMaker(data);
+    
+                    if(insertTor.status === 0){
+                        return {status: 0, message: "OK", response: data}
+                    }else{
+                        return {status: 1, message: "Invalid UUID", response: {}} 
+                    }
+                }else{
+                    return {status: 1, message: "Invalid UUID", response: {}}
+                }
+    
+            }catch(e){
+                console.error(`Error in services: ${e}`);
+                return {status: 500, message: e, response: {}}
+            }
+        }
+    
+        // DLTB_API_CREATE_TOR
+        async InsertToFileMaker(tors : any){
+            
+            try{
+    
+                const token = await this.GenerateSession();
+    
+                console.log(`TOKEN: ${token}`)
+            
+                const config = {
+                    headers :{
+                        Authorization : `Bearer ${token}`
+                    }
+                }
+        
+                tors.map(async (tor: any) => {
+    
+                    try {
+                      
+                        const bodyParameters : any = {
+                            fieldData:{
+                                
+                                    "UUID": tor.UUID,
+                                    "device_id": tor.device_id,
+                                    "control_no": tor.control_no,
+                                    "tor_no": tor.tor_no,
+                                    "date_of_trip": tor.date_of_trip,
+                                    "bus_no": tor.bus_no,
+                                    "route": tor.route,
+                                    "route_code": tor.route_code,
+                                    "emp_no_driver_1": tor.emp_no_driver_1,
+                                    "emp_no_driver_2": tor.emp_no_driver_2,
+                                    "emp_no_conductor": tor.emp_no_conductor,
+                                    "emp_name_driver_1": tor.emp_name_driver_1,
+                                    "emp_name_driver_2": tor.emp_name_driver_2,
+                                    "emp_name_conductor": tor.emp_name_conductor,
+                                    "eskirol_id_driver": tor.eskirol_id_driver,
+                                    "eskirol_id_conductor": tor.eskirol_id_conductor,
+                                    "eskirol_name_driver": tor.eskirol_name_driver,
+                                    "eskirol_name_conductor": tor.eskirol_name_conductor,
+                                    "no_of_trips": tor.no_of_trips,
+                                    "ticket_revenue_atm": tor.ticket_revenue_atm,
+                                    "ticket_count_atm": tor.ticket_count_atm,
+                                    "ticket_revenue_atm_passenger": tor.ticket_revenue_atm_passenger,
+                                    "ticket_revenue_atm_baggage": tor.ticket_revenue_atm_baggage,
+                                    "ticket_count_atm_passenger": tor.ticket_count_atm_passenger,
+                                    "ticket_count_atm_baggage": tor.ticket_count_atm_baggage,
+                                    "ticket_revenue_punch": tor.ticket_revenue_punch,
+                                    "ticket_count_punch": tor.ticket_count_punch,
+                                    "ticket_revenue_punch_passenger": tor.ticket_revenue_punch_passenger,
+                                    "ticket_revenue_punch_baggage": tor.ticket_revenue_punch_baggage,
+                                    "ticket_count_punch_passenger": tor.ticket_count_punch_passenger,
+                                    "ticket_count_punch_baggage": tor.ticket_count_punch_baggage,
+                                    "ticket_revenue_charter": tor.ticket_revenue_charter,
+                                    "ticket_count_charter": tor.ticket_count_charter,
+                                    "ticket_revenue_waybill": tor.ticket_revenue_waybill,
+                                    "ticket_count_waybill": tor.ticket_count_waybill,
+                                    "ticket_amount_cancelled": tor.ticket_amount_cancelled,
+                                    "ticket_count_cancelled": tor.ticket_count_cancelled,
+                                    "ticket_amount_passes": tor.ticket_amount_passes,
+                                    "ticket_count_passes": tor.ticket_count_passes,
+                                    "passenger_revenue": tor.passenger_revenue,
+                                    "baggage_revenue": tor.baggage_revenue,
+                                    "gross_revenue": tor.gross_revenue,
+                                    "passenger_count": tor.passenger_count,
+                                    "baggage_count": tor.baggage_count,
+                                    "commission_driver1_passenger": tor.commission_driver1_passenger,
+                                    "auto_commission_driver1_passenger": tor.auto_commission_driver1_passenger,
+                                    "commission_driver1_baggage": tor.commission_driver1_baggage,
+                                    "auto_commission_driver1_baggage": tor.auto_commission_driver1_baggage,
+                                    "commission_driver1": tor.commission_driver1,
+                                    "auto_commission_driver1": tor.auto_commission_driver1,
+                                    "commission_driver2_passenger": tor.commission_driver2_passenger,
+                                    "auto_commission_driver2_passenger": tor.auto_commission_driver2_passenger,
+                                    "commission_driver2_baggage": tor.commission_driver2_baggage,
+                                    "auto_commission_driver2_baggage": tor.auto_commission_driver2_baggage,
+                                    "commission_driver2": tor.commission_driver2,
+                                    "auto_commission_driver2": tor.auto_commission_driver2,
+                                    "commission_conductor_passenger": tor.commission_conductor_passenger,
+                                    "auto_commission_conductor_passenger": tor.auto_commission_conductor_passenger,
+                                    "commission_conductor_baggage": tor.commission_conductor_baggage,
+                                    "auto_commission_conductor_baggage": tor.auto_commission_conductor_baggage,
+                                    "commission_conductor": tor.commission_conductor,
+                                    "auto_commission_conductor": tor.auto_commission_conductor,
+                                    "incentive_driver1": tor.incentive_driver1,
+                                    "incentive_driver2": tor.incentive_driver2,
+                                    "incentive_conductor": tor.incentive_conductor,
+                                    "allowance_driver1": tor.allowance_driver1,
+                                    "allowance_driver2": tor.allowance_driver2,
+                                    "allowance_conductor": tor.allowance_conductor,
+                                    "eskirol_commission_driver": tor.eskirol_commission_driver,
+                                    "eskirol_commission_conductor": tor.eskirol_commission_conductor,
+                                    "eskirol_cash_bond_driver": tor.eskirol_cash_bond_driver,
+                                    "eskirol_cash_bond_conductor": tor.eskirol_cash_bond_conductor,
+                                    "toll_fees": tor.toll_fees,
+                                    "parking_fee": tor.parking_fee,
+                                    "diesel": tor.diesel,
+                                    "diesel_no_of_liters": tor.diesel_no_of_liters,
+                                    "others": tor.others,
+                                    "services": tor.services,
+                                    "callers_fee": tor.callers_fee,
+                                    "employee_benefits": tor.employee_benefits,
+                                    "repair_maintenance": tor.repair_maintenance,
+                                    "materials": tor.materials,
+                                    "representation": tor.representation,
+                                    "total_expenses": tor.total_expenses,
+                                    "net_collections": tor.net_collections,
+                                    "total_cash_remitted": tor.total_cash_remitted,
+                                    "final_remittance": tor.final_remittance,
+                                    "final_cash_remitted": tor.final_cash_remitted,
+                                    "overage_shortage": tor.overage_shortage,
+                                    "tellers_id": tor.tellers_id,
+                                    "tellers_name": tor.tellers_name,
+                                    "coding": tor.coding,
+                                    "remarks": tor.remarks
+                                
+                            }
+                        };
+                
+                        const request = await axios.post(`${process.env.DLTB_API_CREATE_TOR}/tor_main/records`, bodyParameters, config);
+    
+                        
+                        
+                    } catch (e) {
+                        console.log(`Error in inserting tor ${e}`);
+                    }
+                    const updateStatusOfTor = await TORMainRepository.UpdateIsUploaded(tor.id, true);
+                });
+    
+                const deleteToken = await this.EndSession(token);
+    
+                return {status: 0, message: "OK", response: deleteToken}
+            }catch(e){
+                console.error(`Error in services: ${e}`);
+                return {status: 500, message: e, response: {}}
+            }
+    
+        }
 
     
 

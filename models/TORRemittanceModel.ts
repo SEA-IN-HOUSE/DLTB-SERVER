@@ -156,6 +156,14 @@ const fuelSchema = new mongoose.Schema({
         default:0,
 
     },
+
+    isUploaded:{
+
+        type: Boolean,
+        default : false,
+        index: true,
+
+    },
     dateCreated:{
         type: Date,
         index: true,

@@ -125,7 +125,13 @@ const violationSchema = new mongoose.Schema({
         index: true,
     },
 
+    isUploaded:{
 
+        type: Boolean,
+        default : false,
+        index: true,
+
+    },
     dateCreated:{
         type: Date,
         index: true,

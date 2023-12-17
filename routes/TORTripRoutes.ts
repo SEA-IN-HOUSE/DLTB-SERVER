@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CheckTokenMiddleware } from "../middlewares/CheckTokenMiddleware";
-import { CreateTORTripController,  GetTORTripPerCoopIdController, GetTorTripByCoopIdAndFilterController, UpdateTORTripByControlNoController } from "../controllers/TORTripController";
+import { CreateTORTripController,  GetTORTripPerCoopIdController, GetTorTripByCoopIdAndFilterController, SyncToFileMakerTORTripController, UpdateTORTripByControlNoController } from "../controllers/TORTripController";
 import { GetTORRemittanceByCoopIdAndDateController } from "../controllers/TORRemittanceController";
 
 const TORTripRouter = Router();
@@ -13,5 +13,7 @@ TORTripRouter.post('/tor/trip/:id', CheckTokenMiddleware, GetTORRemittanceByCoop
 TORTripRouter.put('/tor/trip/:id', CheckTokenMiddleware, UpdateTORTripByControlNoController);
 
 TORTripRouter.post('/tor/trip/filter/:id', CheckTokenMiddleware, GetTorTripByCoopIdAndFilterController)
+
+TORTripRouter.get('/tor/trip/sync/:coopId', CheckTokenMiddleware, SyncToFileMakerTORTripController);
 
 export default TORTripRouter;

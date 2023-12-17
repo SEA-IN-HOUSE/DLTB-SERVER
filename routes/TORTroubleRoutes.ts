@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CheckTokenMiddleware } from "../middlewares/CheckTokenMiddleware";
-import { CreateNewTorTroubleController, GetAllTorTroubleController, GetTORTroublePerCoopIdController, GetTORTroublePyCoopIdAndDateController } from "../controllers/TORTroubleController";
+import { CreateNewTorTroubleController, GetAllTorTroubleController, GetTORTroublePerCoopIdController, GetTORTroublePyCoopIdAndDateController, SyncToFileMakerTORTroubleController } from "../controllers/TORTroubleController";
 
 const TORTroubleRouter = Router();
 
@@ -11,5 +11,7 @@ TORTroubleRouter.get('/tor/trouble/:id', CheckTokenMiddleware, GetTORTroublePerC
 TORTroubleRouter.post('/tor/trouble', CheckTokenMiddleware, CreateNewTorTroubleController);
 
 TORTroubleRouter.post('/tor/trouble/:id', CheckTokenMiddleware, GetTORTroublePyCoopIdAndDateController);
+
+TORTroubleRouter.get('/tor/trouble/sync/:coopId', CheckTokenMiddleware, SyncToFileMakerTORTroubleController);
 
 export default TORTroubleRouter;

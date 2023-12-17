@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CheckTokenMiddleware } from "../middlewares/CheckTokenMiddleware";
-import { CreateTorTicketController, CreateTorTicketWithWalletBalanceController, GetTORTicketMainByCoopIdAndDateController, GetTORTicketPerCoopIdController, GetTorTicketByCoopIdAndFilterController, SyncTORTicketController, UpdateTORTicketPerTicketNoController } from "../controllers/TORTicketController";
+import { CreateTorTicketController, CreateTorTicketWithWalletBalanceController, GetTORTicketMainByCoopIdAndDateController, GetTORTicketPerCoopIdController, GetTorTicketByCoopIdAndFilterController, SyncTORTicketController, SyncToFileMakerTORTicketController, UpdateTORTicketPerTicketNoController } from "../controllers/TORTicketController";
 
 
 const TORTicketRouter = Router();
@@ -13,4 +13,7 @@ TORTicketRouter.get('/sync/tor/ticket', CheckTokenMiddleware, SyncTORTicketContr
 TORTicketRouter.post('/tor/main/:id', CheckTokenMiddleware, GetTORTicketMainByCoopIdAndDateController);
 TORTicketRouter.post('/tor/ticket/filter/:id', CheckTokenMiddleware, GetTorTicketByCoopIdAndFilterController);
 TORTicketRouter.put('/tor/ticket/:id', CheckTokenMiddleware , UpdateTORTicketPerTicketNoController);
+
+
+TORTicketRouter.get('/tor/ticket/sync/:coopId', CheckTokenMiddleware, SyncToFileMakerTORTicketController);
 export default TORTicketRouter;

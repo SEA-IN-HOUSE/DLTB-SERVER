@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CheckTokenMiddleware } from "../middlewares/CheckTokenMiddleware";
-import { CreateNewTorViolationController, GetAllTorViolationController, GetTorViolationByCoopIdAndFilterController } from "../controllers/TORViolationController";
+import { CreateNewTorViolationController, GetAllTorViolationController, GetTorViolationByCoopIdAndFilterController, SyncToFileMakerTORViolationController } from "../controllers/TORViolationController";
 
 const TORViolationRouter = Router();
 
@@ -12,4 +12,6 @@ TORViolationRouter.post('/tor/violation', CheckTokenMiddleware, CreateNewTorViol
 
 TORViolationRouter.post('/tor/violation/filter/:id', CheckTokenMiddleware, GetTorViolationByCoopIdAndFilterController);
 
+
+TORViolationRouter.get('/tor/violation/sync/:coopId', CheckTokenMiddleware, SyncToFileMakerTORViolationController);
 export default TORViolationRouter;

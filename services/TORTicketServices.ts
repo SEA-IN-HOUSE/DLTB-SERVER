@@ -437,6 +437,144 @@ class TORTicketServices{
 
     }
 
+    async SyncDataByCoopid(coopId: string){
+
+        console.log(`Coop id: ${coopId}`)
+        try{
+
+            const data = await TORTicketRepository.GetDataIsNotUploaded(coopId);
+
+            
+            console.log(`TORS : ${data}`)
+
+            if(data !== null){
+
+                const insertTor = await this.InsertToFileMaker(data);
+
+                if(insertTor.status === 0){
+                    return {status: 0, message: "OK", response: data}
+                }else{
+                    return {status: 1, message: "Invalid UUID", response: {}} 
+                }
+            }else{
+                return {status: 1, message: "Invalid UUID", response: {}}
+            }
+
+        }catch(e){
+            console.error(`Error in services: ${e}`);
+            return {status: 500, message: e, response: {}}
+        }
+    }
+
+    // DLTB_API_CREATE_TOR
+    async InsertToFileMaker(tors : any){
+        
+        try{
+
+            const token = await this.GenerateSession();
+
+            console.log(`TOKEN: ${token}`)
+        
+            const config = {
+                headers :{
+                    Authorization : `Bearer ${token}`
+                }
+            }
+    
+            tors.map(async (tor: any) => {
+
+               
+
+
+                try {
+
+                     // "fieldData": {
+                //     "UUID": "ab91cc01-0059-47db-9ad5-a9066ceabcdc",
+                //     "device_id": "ab35271806004852",
+                //     "control_no": "23605142020000002",
+                //     "tor_no": "236-200514-1144",
+                //     "date_of_trip": "05/14/2020",
+                //     "bus_no": "236",
+                //     "route": "LRT-CALATAGAN",
+                //     "route_code": "CLT",
+                //     "bound": "SOUTH",
+                //     "trip_no": 5,
+                //     "ticket_no": "236012820204852000104",
+                //     "ticket_type": "S",
+                //     "ticket_status": "",
+                //     "timestamp": "2020-01-28 12:23:33.000000",
+                //     "from_place": "LRT TAFT BUENDIA",
+                //     "to_place": "CALATAGAN",
+                //     "from_km": 5,
+                //     "to_km": 125,
+                //     "km_run": 120,
+                //     "fare": 168.0,
+                //     "card_no": "3125100907434410",
+                //     "status": "",
+                //     "lat": "14.076688",
+                //     "long": "120.866036",
+                //     "created_on": "2019-12-23 09:05:35.000000",
+                //     "updated_on": "2019-12-23 09:05:35.000000",
+                //     "previous_balance": "240.00",
+                //     "current_balance": "84.00"
+                // }
+
+    
+
+                    const bodyParameters : any = {
+                        fieldData:{
+                            "UUID": tor.UUID,
+                            "device_id": tor.device_id,
+                            "control_no": tor.control_no,
+                            "tor_no": tor.tor_no,
+                            "date_of_trip":tor.date_of_trip,
+                            "bus_no": tor.bus_no,
+                            "route": tor.route,
+                            "route_code": tor.route_code,
+                            "bound": tor.bound,
+                            "trip_no": tor.trip_no,
+                            "ticket_no": tor.ticket_no,
+                            "ticket_type": tor.ticket_type,
+                            "ticket_status": tor.ticket_status,
+                            "timestamp": tor.timestamp,
+                            "from_place": tor.from_place,
+                            "to_place": tor.to_place,
+                            "from_km": tor.from_km,
+                            "to_km": tor.to_km,
+                            "km_run": tor.km_run,
+                            "fare": tor.fare,
+                            "card_no": tor.card_no,
+                            "status": tor.status,
+                            "lat": tor.lat,
+                            "long": tor.long,
+                            "created_on": tor.created_on,
+                            "updated_on": tor.updated_on,
+                            "previous_balance": tor.previous_balance,
+                            "current_balance": tor.current_balance
+                        }
+                    };
+            
+                    const request = await axios.post(`${process.env.DLTB_API_CREATE_TOR}/tor_tickets/records`, bodyParameters, config);
+
+                    
+                    
+                } catch (e) {
+                    console.log(`Error in inserting tor ${e}`);
+                }
+                const updateStatusOfTor = await TORTicketRepository.UpdateIsUploaded(tor.id, true);
+            });
+
+            const deleteToken = await this.EndSession(token);
+
+            return {status: 0, message: "OK", response: deleteToken}
+        }catch(e){
+            console.error(`Error in services: ${e}`);
+            return {status: 500, message: e, response: {}}
+        }
+
+    }
+
+
 }
 
 export default new TORTicketServices();

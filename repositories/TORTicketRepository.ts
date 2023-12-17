@@ -249,9 +249,61 @@ class TORTicketRepository{
             return null;
         }
     }
+
+    //SYNC
+    async GetDataIsNotUploaded(coopId: string) {
+        try {
+            const data: any = await TORTicketModel.find({
+                $or: [
+                    { "isUploaded": { $exists: false } },
+                    { "isUploaded": { $in: [null] } },
+                ],
+                "coopId": coopId,
+            });
     
+            console.log(`DATA ${data}`);
+            return data;
+        } catch (e) {
+            console.error(`Error in repository: ${e}`);
+            return null;
+        }
+    }
 
-
+    async UpdateIsUploaded(id: string, isUpdate : boolean){
+        try {
+            // Find the document based on ticket_no
+            const filter = { _id: id };
+    
+            // Set the update values
+            const update = {
+                $set: {
+                "isUploaded": isUpdate,
+                },
+               
+            };
+    
+            // Options for findOneAndUpdate
+            const options = {
+                new: true, // Return the modified document rather than the original
+            };
+    
+            // Perform the findOneAndUpdate operation
+            const updatedDocument = await TORTicketModel.findOneAndUpdate(filter, update, options);
+    
+            // Check if a document was found and updated
+            if (updatedDocument) {
+                console.log("Document updated successfully:", updatedDocument);
+                return true;
+            } else {
+                console.log("No document found with the given id:", id);
+                return false;
+            }
+        } catch (e) {
+            console.error("Error in repository:", e);
+            return false;
+        }
+    }
+    
     
 }
 

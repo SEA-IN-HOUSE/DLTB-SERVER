@@ -44,14 +44,27 @@ class MasterCardServices{
             const newMasterCard : any = await MasterCardRepository.CreateNewMasterCard(masterCard);
 
             if(newMasterCard.code === 11000){
-                return "Error duplicate field value";
-            }else{
-                return newMasterCard
+                return { status: 1, message: "Error duplicate field value", response: {} };
+              
+            }
+            
+            if(newMasterCard === 1){
+            
+                return { status: 1, message:"Balance must between 0 - 500000", response: {} };
+            }
+
+            if(!newMasterCard){
+           
+                return { status: 1, message: "Invalid Fields!", response: {} };
+            }
+
+            if(newMasterCard === true){
+                return { status: 0, message: "OK", response: newMasterCard };
             }
 
         }catch(e){
             console.error("Error in master card services: "+e);
-            return e;
+            return { status: 500, message: ""+e, response: {} };
         }
 
 

@@ -36,6 +36,37 @@ export async function GetAllStationController (request: Request, response: Respo
 
 }
 
+
+export async function UpdateStationRowNoByIdAndCoopIdController( request: Request, response: Response ){
+
+    try{
+
+        const data = await StationService.UpdateRowNoById(request.body.id, request.body.rowNo, request.params.coopId );
+
+        response.status(200).json({messages : [{
+            code: data.status,
+            message: data.message,
+            dateTime: GetCurrentDateSTR,
+            }],
+            response : data.response
+        })
+
+    }catch(e){
+        
+        console.error("Error in controller: "+e);
+
+        response.status(500).json({messages : [{
+            code: 500,
+            message: "Internal server error: "+e,
+            dateTime: GetCurrentDateSTR,
+            }],
+            response: {}
+        })
+    }
+
+}
+
+
 export async function AddStationController( request: Request, response: Response ){
 
     try{

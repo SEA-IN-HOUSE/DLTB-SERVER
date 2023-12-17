@@ -200,7 +200,13 @@ current_balance:{
     index: true,
     default: 0
 },
+isUploaded:{
 
+    type: Boolean,
+    default : false,
+    index: true,
+
+},
 dateCreated:{
     type: Date,
     index: true,

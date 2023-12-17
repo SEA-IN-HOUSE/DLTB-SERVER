@@ -148,6 +148,30 @@ class TORRemittanceService{
 
     /////////////////////////////////////
  
+    
+    
+        async FilterGetDataPerCoopId(coopId: string, fromDate: string, toDate: string, filterType: string, filterData: any) {
+            try {
+                console.log(fromDate);
+                console.log(toDate);
+                const data = await TORRemittanceRepository.FilterDataPerCoopId(coopId, fromDate, toDate, filterType, filterData);
+    
+                if(data !== null){
+                    return {status: 0, message: "OK", response: data}
+                }else{
+                    return {status: 1, message: "Invalid Coop Id", response: {}}
+                }
+    
+            } catch (e) {
+                console.error(`Error in services: ${e}`);
+                return {status: 500, message: e, response: {}}
+            }
+        }
+
+
+
+        /////////////////////////////////////
+ 
     async GenerateSession(){
         
         let usernameCred = "filipay";
@@ -204,23 +228,130 @@ class TORRemittanceService{
             }
     
         }
-
-        async FilterGetDataPerCoopId(coopId: string, fromDate: string, toDate: string, filterType: string, filterData: any) {
-            try {
-                console.log(fromDate);
-                console.log(toDate);
-                const data = await TORRemittanceRepository.FilterDataPerCoopId(coopId, fromDate, toDate, filterType, filterData);
+    
+        async SyncDataByCoopid(coopId: string){
+    
+            console.log(`Coop id: ${coopId}`)
+            try{
+    
+                const data = await TORRemittanceRepository.GetDataIsNotUploaded(coopId);
+    
+                
+                console.log(`TORS : ${data}`)
     
                 if(data !== null){
-                    return {status: 0, message: "OK", response: data}
+    
+                    const insertTor = await this.InsertToFileMaker(data);
+    
+                    if(insertTor.status === 0){
+                        return {status: 0, message: "OK", response: data}
+                    }else{
+                        return {status: 1, message: "Invalid UUID", response: {}} 
+                    }
                 }else{
-                    return {status: 1, message: "Invalid Coop Id", response: {}}
+                    return {status: 1, message: "Invalid UUID", response: {}}
                 }
     
-            } catch (e) {
+            }catch(e){
                 console.error(`Error in services: ${e}`);
                 return {status: 500, message: e, response: {}}
             }
+        }
+    
+        // DLTB_API_CREATE_TOR
+        async InsertToFileMaker(tors : any){
+            
+            try{
+    
+                const token = await this.GenerateSession();
+    
+                console.log(`TOKEN: ${token}`)
+            
+                const config = {
+                    headers :{
+                        Authorization : `Bearer ${token}`
+                    }
+                }
+        
+                tors.map(async (tor: any) => {
+    
+                   
+    
+    
+                    try {
+    
+                        // {
+                        //     "UUID": "ab91cc01-0059-47db-9ad5-a9066ceabcdf",
+                        //     "device_id": "ab35271806004845",
+                        //     "control_no": "25105142019000001",
+                        //     "tor_no": "251-200514-0856",
+                        //     "date_of_trip": "10/02/2023",
+                        //     "bus_no": "251",
+                        //     "route": "PITX-NASUGBU",
+                        //     "route_code": "NAS",
+                        //     "bound": "SOUTH",
+                        //     "trip_no": 4,
+                       
+                        //     "remittance_time": "2023-10-02 18:53:53.000000",
+                        //     "remittance_place": "",
+                        //     "remittance_amount": 125.0,
+                        //     "remittance_type": "BAGGAGE",
+                        //     "ctr_no": "",
+                        //     "waybill_ticket_no": "00001",
+                        //     "cashier_emp_no": "5060",
+                        //     "cashier_emp_name": "CASHIER-1",
+                        //     "timestamp": "2023-10-02 18:53:53.000000",
+                        //     "lat": "14.069637",
+                        //     "long": "120.632632",
+                        //     "remarks": ""
+                        // }
+        
+    
+                        const bodyParameters : any = {
+                            fieldData:{
+                                "UUID": tor.fieldData.UUID,
+                                "device_id": tor.fieldData.device_id,
+                                "control_no": tor.fieldData.control_no,
+                                "tor_no": tor.fieldData.tor_no,
+                                "date_of_trip": tor.fieldData.date_of_trip,
+                                "bus_no": tor.fieldData.bus_no,
+                                "route": tor.fieldData.route,
+                                "route_code": tor.fieldData.route_code,
+                                "bound": tor.fieldData.bound,
+                                "trip_no": tor.fieldData.trip_no,
+                                "remittance_time": tor.fieldData.remittance_time,
+                                "remittance_place": tor.fieldData.remittance_place,
+                                "remittance_amount": tor.fieldData.remittance_amount,
+                                "remittance_type": tor.fieldData.remittance_type,
+                                "ctr_no": tor.fieldData.ctr_no,
+                                "waybill_ticket_no": tor.fieldData.waybill_ticket_no,
+                                "cashier_emp_no": tor.fieldData.cashier_emp_no,
+                                "cashier_emp_name": tor.fieldData.cashier_emp_name,
+                                "timestamp": tor.fieldData.timestamp,
+                                "lat": tor.fieldData.lat,
+                                "long": tor.fieldData.long,
+                                "remarks": tor.fieldData.remarks
+                            }
+                        };
+                
+                        const request = await axios.post(`${process.env.DLTB_API_CREATE_TOR}/tor_remittance/records`, bodyParameters, config);
+    
+                        
+                        
+                    } catch (e) {
+                        console.log(`Error in inserting tor ${e}`);
+                    }
+                    const updateStatusOfTor = await TORRemittanceRepository.UpdateIsUploaded(tor.fieldData.id, true);
+                });
+    
+                const deleteToken = await this.EndSession(token);
+    
+                return {status: 0, message: "OK", response: deleteToken}
+            }catch(e){
+                console.error(`Error in services: ${e}`);
+                return {status: 500, message: e, response: {}}
+            }
+    
         }
     
 }

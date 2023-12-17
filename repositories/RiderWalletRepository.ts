@@ -103,12 +103,12 @@ class RiderWalletRepository{
 
     }
 
-    async GetBalancePerRiderId(riderId : String, coopId : string){
+    async GetBalancePerRiderId(riderId : String){
 
         try{
 
             let balance = 0;
-            const data = await RiderWalletModel.findOne({"riderId" : riderId, "coopId": coopId});
+            const data = await RiderWalletModel.findOne({"riderId" : riderId});
             
             if(typeof data?.balance === 'number'){
                 balance = data.balance;

@@ -177,6 +177,14 @@ const inspectionSchema = new mongoose.Schema({
         index: true,
         default: new Date
     },
+
+    isUploaded:{
+
+        type: Boolean,
+        default : false,
+        index: true,
+
+    },
     dateCreated:{
         type: Date,
         index: true,

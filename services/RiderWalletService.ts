@@ -96,7 +96,7 @@ class RiderWalletService {
                             return {status: 1, message: "Card is not valid", response: {}}
                         }
 
-                        const getBalancePerRiderId : number = await RiderWalletRepository.GetBalancePerRiderId(riderId, coopId);
+                        const getBalancePerRiderId : number = await RiderWalletRepository.GetBalancePerRiderId(riderId);
 
                         return {status: 0, message: "OK", response: {"balance" : getBalancePerRiderId}}
 
@@ -142,6 +142,11 @@ class RiderWalletService {
                         // decrease = 0
                         // increase = 1000
                         console.log("HERE")
+
+                        if(increaseAmount + findCardIdInMasterCard.balance > 500000){
+                            return {status: 1, message: "You have reached your balance limit", response: {}}
+                        }
+
                         if(decreaseAmount <=  findCardIdInMasterCard.balance || isNegative === true || decreaseAmount === 0 || increaseAmount >=0){
                             const updateBalance : any = await MasterCardRepository.UpdateMasterCardBalanceByCardId(cardId, decreaseAmount, increaseAmount, coopId);
                             
@@ -201,14 +206,14 @@ class RiderWalletService {
                             return {status: 1, message: "Card is not valid", response: {}}
                         }
 
-                        const getBalancePerRiderId : number = await RiderWalletRepository.GetBalancePerRiderId(riderId,coopId);
+                        const getBalancePerRiderId : number = await RiderWalletRepository.GetBalancePerRiderId(riderId);
             
 
                         if(decreaseAmount <=  getBalancePerRiderId|| isNegative === true || decreaseAmount === 0){
                                const updateBalancePerRiderId = await RiderWalletRepository.
                             UpdateRiderWalletByRiderId(riderId, increaseAmount, decreaseAmount);
 
-                            const newBalancePerRiderId : number = await RiderWalletRepository.GetBalancePerRiderId(riderId,coopId);
+                            const newBalancePerRiderId : number = await RiderWalletRepository.GetBalancePerRiderId(riderId);
                             
                             return {status: 0, message: `OK`, response: {
                                 "previousBalance" : getBalancePerRiderId,

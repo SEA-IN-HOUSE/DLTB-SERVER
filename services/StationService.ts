@@ -63,6 +63,25 @@ class StationService{
         }
 
     }
+
+    async UpdateRowNoById(id : string, newRowNo: number, coopId: string){
+    
+        try{
+
+            const data = await StationRepository.UpdateRowNoById(id, newRowNo,coopId);
+
+            if(data !== null){
+                return {status: 0, message: "OK", response: data}
+            }else{
+                return {status: 1, message: "Failed to update row no", response: {}}
+            }
+
+        }catch(e){
+            console.log(`Error in services ${e}`);
+            return {status: 500, message: e, response: {}}
+        }
+
+    }
 }
 
 export default new StationService();

@@ -6,6 +6,7 @@ export interface IMasterCard extends Document {
     empNo : number,
     balance: number,
     cardType: string,
+    sNo: string,
     createdAt: Date,
     updatedAt: Date,
 }
@@ -27,6 +28,13 @@ const masterSchema = new mongoose.Schema({
         required: true,
     },
 
+    sNo:{
+        type: String,
+        unique: true,
+        index: true,
+        required: true
+    },
+
     balance:{
         type: Number,
         default: 0.00,
@@ -40,13 +48,13 @@ const masterSchema = new mongoose.Schema({
 
     createdAt:{
         type: Date,
-        default: new Date,
+        default: () => new Date,
         required: true,
     },
 
     updatedAt:{
         type: Date,
-        default: new Date,
+        default: () => new Date,
         required: true,
     }
 

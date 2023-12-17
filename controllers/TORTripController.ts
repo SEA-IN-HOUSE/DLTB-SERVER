@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { GetCurrentDateSTR } from "../common/GetCurrentDate";
 import TORTripServices from "../services/TORTripServices";
-import TORTicketServices from "../services/TORTicketServices";
 
 
 export async function GetAllTORTripController(request: Request, response: Response){
@@ -194,5 +193,36 @@ export async function GetTORRemittanceByCoopIdAndDateController(request: Request
             response: {}
         })
     }
+
+}
+
+
+
+export async function SyncToFileMakerTORTripController(request: Request, response : Response){
+
+    try{
+
+      
+ 
+        const updateTORMain = await TORTripServices.SyncDataByCoopid(request.params.coopId)
+ 
+         response.status(200).json({messages : [{
+             code: updateTORMain.status,
+             message: updateTORMain.message,
+             dateTime: GetCurrentDateSTR(),
+         }],
+         response: {}
+         });
+     }catch(e){
+         console.error("Error in tor main controller: "+e)
+         response.status(500).json({messages : [{
+             code: "212",
+             message: "Error in syncing tors: "+e,
+             dateTime: GetCurrentDateSTR(),
+             }],
+             response: {}
+         })
+     }
+ 
 
 }

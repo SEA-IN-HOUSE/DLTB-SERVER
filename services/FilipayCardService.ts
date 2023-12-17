@@ -13,6 +13,7 @@ export interface IFilipayCard{
    cardID: string,
    balance: number,
    cardType: string,
+   sNo: string,
 
 }
 
@@ -39,6 +40,7 @@ class FilipayCardService{
                     _id: '$riderId',
                     cardID: '$riderInfo.cardId',
                     balance: '$balance',
+                    sNo: '$riderInfo.sNo', 
                     cardType: {
                       $cond: {
                         if: { $eq: ['$balance', 0] },
@@ -97,7 +99,7 @@ class FilipayCardService{
           return {status: 1, message: "Filipay is not valid", response: {}}
       }
 
-      const getBalanceForFilipayCard : number = await RiderWalletRepository.GetBalancePerRiderId(filipayCardriderIdPerCardId._id.toString(), coopId);
+      const getBalanceForFilipayCard : number = await RiderWalletRepository.GetBalancePerRiderId(filipayCardriderIdPerCardId._id.toString());
 
       if(amount > findCardIdInMasterCard.balance){
         return {status: 1, message: "Insufficient Balance", response: {}}

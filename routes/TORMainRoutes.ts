@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CheckTokenMiddleware } from "../middlewares/CheckTokenMiddleware";
-import { CreateNewTORMAINController, GetAllDataPerCoopIdController, GetTORMainByCoopIdAndDateController, GetTorMainByCoopIdAndFilterController, PatchTORMAINController, SyncTorMainController, UpdateTORMainFinalRemittanceByTorNoController } from "../controllers/TorMainController";
+import { CreateNewTORMAINController, GetAllDataPerCoopIdController, GetTORMainByCoopIdAndDateController, GetTorMainByCoopIdAndFilterController, PatchTORMAINController, SyncToFileMakerTORMainController, SyncTorMainController, UpdateTORMainFinalRemittanceByTorNoController } from "../controllers/TorMainController";
 
 const TORMainRouter = Router();
 
@@ -25,5 +25,7 @@ TORMainRouter.post('/tor/main/filter/:id', CheckTokenMiddleware, GetTorMainByCoo
 TORMainRouter.get('/sync/tor/main' , CheckTokenMiddleware, SyncTorMainController); 
 
 TORMainRouter.put('/tor/main/final-remittance/:torNo', CheckTokenMiddleware, UpdateTORMainFinalRemittanceByTorNoController);
+
+TORMainRouter.get('/tor/main/sync/:coopId', CheckTokenMiddleware, SyncToFileMakerTORMainController);
 
 export default TORMainRouter;

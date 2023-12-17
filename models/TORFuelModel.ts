@@ -139,6 +139,13 @@ const torFuel = new mongoose.Schema({
         index: true,
         default:""
     },
+    isUploaded:{
+
+        type: Boolean,
+        default : false,
+        index: true,
+
+    },
 
     dateCreated:{
         type: Date,
