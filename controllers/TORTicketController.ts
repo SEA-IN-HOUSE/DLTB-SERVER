@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import { GetCurrentDateSTR } from "../common/GetCurrentDate";
 import TORTicketServices from "../services/TORTicketServices";
 import RiderWalletService from "../services/RiderWalletService";
-import ActivityLogService from "../services/ActivityLogService";
-
 
 export async function CreateTorTicketWithWalletBalanceController(request : Request, response: Response ){
  
@@ -11,18 +9,14 @@ export async function CreateTorTicketWithWalletBalanceController(request : Reque
     
     try{
 
-
         const ticketData = await TORTicketServices.FindDataByTicketNo(request.body.items.ticket_no);
-        console.log(`ticketData ${ticketData.status}`)
+     
         if(ticketData.status !== 0 && ticketData.status !== undefined && ticketData.status !== 500){
 
             const updateRiderWallet = await RiderWalletService.UpdateRiderWalletByCardId(request.body.items.coopId, request.body.cardId, decreaseAmountValue, 0, request.body.cardType, request.body.isNegative);
 
             if(updateRiderWallet.status === 0){
 
-                console.log(updateRiderWallet.response.previousBalance)
-                console.log(updateRiderWallet.response.newBalance)
-    
                 const newData = request.body.items;
 
                 newData.previous_balance = updateRiderWallet.response.previousBalance;
@@ -50,10 +44,8 @@ export async function CreateTorTicketWithWalletBalanceController(request : Reque
                 });
                }
     
-               
-    
             }else{
-                console.log("pumasok dito")
+ 
                 response.status(200).json({messages : {
                     code:updateRiderWallet.status,
                     message: updateRiderWallet.message,
@@ -74,11 +66,6 @@ export async function CreateTorTicketWithWalletBalanceController(request : Reque
             });
         }
 
-     
-
-       
-
-
     }catch(e){
         console.error("Error in tor main controller: "+e)
         response.status(500).json({messages : [{
@@ -94,22 +81,15 @@ export async function CreateTorTicketWithWalletBalanceController(request : Reque
 
 
 export async function UpdateTORTicketPerTicketNoController(request : Request, response: Response ){
- 
-    console.log(`ADDITIONAL FARE REQUEST BODY ${request.body.items.additionalFare}`)
+
     const decreaseAmountValue : number =  request.body.amount? request.body.amount : 0;
 
     let additionalFare : number = request.body.items.additionalFare? request.body.items.additionalFare : 0;
-
-   
-    
+  
     try{
-
-       
-        
+      
         const ticketData : any = await TORTicketServices.FindDataByTicketNo(request.params.id);
-
-
-       
+      
         if(ticketData.status === 0){
          
             additionalFare  = additionalFare + decreaseAmountValue;
@@ -118,14 +98,10 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
 
             if(updateRiderWallet.status === 0){
 
-        
-
-                console.log(updateRiderWallet.response.previousBalance)
-                console.log(updateRiderWallet.response.newBalance)
-
                 const _newBalance : any = updateRiderWallet.response.newBalance;
                 const _previousBalance : any  = updateRiderWallet.response.previousBalance;
                 const _ticketNo : any = request.body.items.ticket_no;
+<<<<<<< HEAD
                 const _additionalFareCardType : any = request.body.items.additionalFareCardType;
                 // newData.previous_balance = updateRiderWallet.response.previousBalance;
                 // newData.current_balance = updateRiderWallet.response.newBalance;
@@ -134,6 +110,10 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
                 
 
                 const data : any = await TORTicketServices.FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare,  _newBalance, _previousBalance, _ticketNo,_additionalFareCardType)
+=======
+ 
+                const data : any = await TORTicketServices.FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare,  _newBalance, _previousBalance, _ticketNo)
+>>>>>>> 045945ef34acdb2e5431434c21c05fd9809d71d8
 
                 if(data.status === 0){
 
@@ -152,10 +132,10 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
                     },
                     response: {}
                     });
-                   }
+                }
     
             }else{
-                console.log("pumasok dito")
+          
                 response.status(200).json({messages : {
                     code:updateRiderWallet.status,
                     message: updateRiderWallet.message,
@@ -166,7 +146,7 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
             }
 
         }else{
-            console.log("pumasok dito")
+       
             response.status(200).json({messages : {
                 code:1,
                 message: "Invalid Ticket No",
@@ -175,11 +155,6 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
             response: {}
             });
         }
-
-     
-
-       
-
 
     }catch(e){
         console.error("Error in tor main controller: "+e)
@@ -197,7 +172,7 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
 export async function GetTORTicketMainByCoopIdAndDateController(request: Request, response: Response){
 
     try{
-        const data = await TORTicketServices.GetDataPerCoopIdAndDateRange(request.params.id, request.body.fromDate, request.body.toDate);
+        const data : any = await TORTicketServices.GetDataPerCoopIdAndDateRange(request.params.id, request.body.fromDate, request.body.toDate);
         response.status(200).json({messages : [{
             code: data.status,
             message: data.message,
@@ -351,8 +326,6 @@ export async function GetTORTicketPerCoopIdController(request : Request, respons
 
         const data = await TORTicketServices.GetDataPerCoopId(request.params.id);
 
-        //const data = await TORTicketServices.GetAllTORTicketService();
-
         response.status(200).json({messages : [{
             code: data.status,
             message: data.message,
@@ -383,7 +356,7 @@ export async function GetTorTicketByCoopIdAndFilterController(request : Request,
     try{
 
         const data = await TORTicketServices.FilterGetDataPerCoopId(request.params.id, request.body.fromDate, request.body.toDate, request.body.filterType, request.body.filterData)
-        console.log(data)
+
         response.status(200).json({messages : [{
             code: data.status,
             message: data.message,
@@ -419,6 +392,7 @@ export async function SyncToFileMakerTORTicketController(request: Request, respo
          }],
          response: {}
          });
+
      }catch(e){
          console.error("Error in tor main controller: "+e)
          response.status(500).json({messages : [{
