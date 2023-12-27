@@ -137,7 +137,7 @@ class TORInspectionService{
             console.log(`Coop id: ${coopId}`)
             try{
     
-                const data = await TORInspectionRepository.GetDataIsNotUploaded(coopId);
+                const data = await TORInspectionRepository.GetDataPerCoopId(coopId)
     
                 
                 console.log(`TORS : ${data}`)

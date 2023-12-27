@@ -153,6 +153,48 @@ class Directions{
     }
     
 
+    
+  async  UpdateById(id: string, newData : any) {
+    try {
+        // Use updateOne to update a single document that matches the criteria
+        const result = await DirectionModel.updateOne(
+            { _id : id },
+            { $set: newData }
+        );
+
+        // Check if any documents were matched and updated
+        if (result.modifiedCount > 0) {
+            console.log(`Successfully updated station id ${id} `);
+            return true;
+        } else {
+           
+            return false;
+        }
+    } catch (e) {
+        console.error("Repository error: " + e);
+        return false;
+    }
+  }
+
+async  DeleteById(id : string) {
+  try {
+      // Use deleteOne to delete a single document by its ID
+      const result = await DirectionModel.deleteOne({ '_id': id });
+
+      // Check if any documents were matched and deleted
+      if (result.deletedCount > 0) {
+
+          return true;
+      } else {
+ 
+          return false;
+      }
+  } catch (e) {
+      console.error("Repository error: " + e);
+      return false;
+  }
+}
+
 }
 
 export const directionRepo = new Directions();

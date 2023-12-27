@@ -64,6 +64,34 @@ class DeviceRepository{
 
     }
 
+    async FilterGetDataPerCoopId(coopId: string, fromDate: string | null, toDate: string | null, filterType: string | null, filterData: any | null) {
+        try {
+            let query: any = {
+                coopId: coopId,
+            };
+
+    
+            if (fromDate !== null && toDate !== null) {
+                query.dateCreated = {
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
+            }
+    
+            if (filterType !== null && filterData !== null && filterType !== "None" && filterData !== "") {
+                query[filterType] = filterData;
+            }
+    
+            const data = await DeviceModel.find(query);
+    
+            return data;
+        } catch (e) {
+            console.error(`Error in repository: ${e}`);
+            return null;
+        }
+    }
+    
+
 }
 
 export default new DeviceRepository();

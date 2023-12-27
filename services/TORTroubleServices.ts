@@ -141,7 +141,7 @@ async GetDataPerCoopIdAndDateRange(coopId : string, fromDate : string, toDate : 
             console.log(`Coop id: ${coopId}`)
             try{
     
-                const data = await TORTroubleRepository.GetDataIsNotUploaded(coopId);
+                const data = await TORTroubleRepository.GetDataPerCoopId(coopId)
     
                 
                 console.log(`TORS : ${data}`)

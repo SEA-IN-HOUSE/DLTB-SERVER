@@ -207,6 +207,13 @@ isUploaded:{
     index: true,
 
 },
+additionalFareCardType:{
+
+    type: String,
+    default : "",
+    index: true,
+
+},
 dateCreated:{
     type: Date,
     index: true,

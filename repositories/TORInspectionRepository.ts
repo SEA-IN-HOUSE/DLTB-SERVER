@@ -180,10 +180,7 @@ class TORInspectionRepository{
     async GetDataIsNotUploaded(coopId: string) {
         try {
             const data: any = await TORInspectionModel.find({
-                $or: [
-                    { "fieldData.isUploaded": { $exists: false } },
-                    { "fieldData.isUploaded": { $in: [null] } },
-                ],
+                
                 "fieldData.coopId": coopId,
             });
     

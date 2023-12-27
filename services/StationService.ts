@@ -82,6 +82,43 @@ class StationService{
         }
 
     }
+
+
+    async UpdateById(id : string , newData : any){
+        try{
+
+           const data = await StationRepository.UpdateById(id, newData)
+
+           if(data === true){
+            return {status: 0, message: "OK", response: data}
+           }else{
+            return {status: 1, message: "Invalid Fields", response: data}
+           }
+
+
+        }catch(e){
+            console.error("Error in services: "+e);
+            return {status: 500, message: e, response: {}}
+        }
+    }
+
+    async DeleteById(id : string){
+        try{
+            
+           const data = await StationRepository.DeleteById(id)
+
+           if(data === true){
+            return {status: 0, message: "OK", response: data}
+           }else{
+            return {status: 1, message: "Invalid Fields", response: data}
+           }
+
+
+        }catch(e){
+            console.error("Error in services: "+e);
+            return {status: 500, message: e, response: {}}
+        }
+    }
 }
 
 export default new StationService();

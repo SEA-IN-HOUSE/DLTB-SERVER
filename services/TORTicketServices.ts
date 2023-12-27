@@ -44,6 +44,7 @@ interface ITicket {
     long: string,
     created_on: Date,
     updated_on: Date,
+    additionalFareCardType: string,
     previous_balance: number,
     current_balance: number
 }
@@ -226,9 +227,9 @@ class TORTicketServices{
     }
 
 
-    async FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare : number , currentBalance : number, previousBalance: number, ticketNo : string) {
+    async FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare : number , currentBalance : number, previousBalance: number, ticketNo : string, additionalFareCardType : string) {
         try {
-            const data = await TORTicketRepository.FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare, currentBalance, previousBalance, ticketNo)
+            const data = await TORTicketRepository.FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare, currentBalance, previousBalance, ticketNo, additionalFareCardType)
 
             if(data !== null){
                 return {status: 0, message: "OK", response: data}
@@ -442,8 +443,7 @@ class TORTicketServices{
         console.log(`Coop id: ${coopId}`)
         try{
 
-            const data = await TORTicketRepository.GetDataIsNotUploaded(coopId);
-
+            const data = await TORTicketRepository.GetDataPerCoopId(coopId)
             
             console.log(`TORS : ${data}`)
 

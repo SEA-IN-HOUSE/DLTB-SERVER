@@ -234,7 +234,7 @@ class TORRemittanceService{
             console.log(`Coop id: ${coopId}`)
             try{
     
-                const data = await TORRemittanceRepository.GetDataIsNotUploaded(coopId);
+                const data = await TORRemittanceRepository.GetDataPerCoopId(coopId)
     
                 
                 console.log(`TORS : ${data}`)

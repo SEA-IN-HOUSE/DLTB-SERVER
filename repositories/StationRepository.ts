@@ -103,6 +103,52 @@ class StationRepository{
 
   }
 
+  async  UpdateById(id: string, newData : any) {
+    try {
+      console.log("PUMASOK DITO")
+      console.log(id)
+      console.log(newData)
+        // Use updateOne to update a single document that matches the criteria
+        const result = await StationModel.updateOne(
+            { _id : id },
+            { $set: newData }
+        );
+
+        // Check if any documents were matched and updated
+        if (result.modifiedCount > 0) {
+            console.log(`Successfully updated station id ${id} `);
+            return true;
+        } else {
+           
+            return false;
+        }
+    } catch (e) {
+        console.error("Repository error: " + e);
+        return false;
+    }
+  }
+
+async  DeleteById(stationId : string) {
+  console.log(`STATION ID: ${stationId}`)
+  try {
+      // Use deleteOne to delete a single document by its ID
+      const result = await StationModel.deleteOne({ '_id': stationId });
+
+      // Check if any documents were matched and deleted
+      if (result.deletedCount > 0) {
+          console.log(`Successfully deleted station with ID: ${stationId}`);
+          return true;
+      } else {
+          console.log(`No matching station found for ID: ${stationId}`);
+          return false;
+      }
+  } catch (e) {
+      console.error("Repository error: " + e);
+      return false;
+  }
+}
+
+
   async UpdateRowNoById(id: string, newRowNo: number, coopId: string) {
     try {
       // Find the station to update

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { CheckTokenMiddleware } from "../middlewares/CheckTokenMiddleware";
-import { AddStationController, GetAllStationController, GetAllStationPerCoopIdController, GetStationPerCoopIdAndRouteIdController, UpdateStationRowNoByIdAndCoopIdController } from "../controllers/StationController";
+import { AddStationController, DeleteStationByIdController, GetAllStationController, GetAllStationPerCoopIdController, GetStationPerCoopIdAndRouteIdController, UpdateStationByIdController, UpdateStationRowNoByIdAndCoopIdController } from "../controllers/StationController";
 
 const StationRouter = Router();
 
@@ -13,5 +13,9 @@ StationRouter.post("/station", CheckTokenMiddleware, AddStationController)
 StationRouter.get("/station/:routeId/:coopId", CheckTokenMiddleware, GetStationPerCoopIdAndRouteIdController)
 
 StationRouter.put("/station/rowNo/:coopId" , CheckTokenMiddleware, UpdateStationRowNoByIdAndCoopIdController)
+
+StationRouter.put("/station/:id", CheckTokenMiddleware, UpdateStationByIdController)
+
+StationRouter.delete("/station/:id", CheckTokenMiddleware, DeleteStationByIdController)
 
 export default StationRouter;

@@ -150,3 +150,62 @@ try{
 }
 
 }
+
+export async function UpdateStationByIdController(request: Request, response : Response){
+
+    
+    try{
+        const data = await StationService.UpdateById(request.params.id, request.body);
+        response.status(200).json({messages : [{
+            code: data.status,
+            message: data.message,
+            dateTime: GetCurrentDateSTR(),
+            }],
+            response : data.response
+        })
+    
+    
+       
+    
+    }catch(e){
+        response.status(500).json({messages : [{
+            code: "212",
+            message: "Error in getting all employees: "+e,
+            dateTime: GetCurrentDateSTR(),
+        }],
+        response:{}
+    });
+    }
+    
+    }
+
+
+    
+export async function DeleteStationByIdController(request: Request, response : Response){
+
+    
+    try{
+        console.log(`PARAMS ID: ${request.params.id}`)
+        const data = await StationService.DeleteById(request.params.id);
+        response.status(200).json({messages : [{
+            code: data.status,
+            message: data.message,
+            dateTime: GetCurrentDateSTR(),
+            }],
+            response : data.response
+        })
+    
+    
+       
+    
+    }catch(e){
+        response.status(500).json({messages : [{
+            code: "212",
+            message: "Error in getting all employees: "+e,
+            dateTime: GetCurrentDateSTR(),
+        }],
+        response:{}
+    });
+    }
+    
+    }

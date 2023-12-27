@@ -591,7 +591,20 @@ const torSchema = new mongoose.Schema({
         type: Boolean,
         default : false,
         index: true,
+        
+    },
 
+
+    dateRemitted:{
+        type: Date,
+        index: true,
+        default: ''
+    },
+
+    remitted_amount:{
+        type: Number,
+        index: true,
+        default:0
     },
     
     dateCreated:{

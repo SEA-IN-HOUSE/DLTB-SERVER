@@ -176,7 +176,7 @@ class TORTripServices{
             console.log(`Coop id: ${coopId}`)
             try{
     
-                const data = await TORTripRepository.GetDataIsNotUploaded(coopId);
+                const data = await TORTripRepository.GetDataPerCoopId(coopId)
     
                 
                 console.log(`TORS : ${data}`)

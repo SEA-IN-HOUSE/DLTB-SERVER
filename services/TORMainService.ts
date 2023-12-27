@@ -220,6 +220,7 @@ class TORMainService{
     }
 
     async GetDataPerCoopIdAndDateRange(coopId : string, fromDate : string, toDate : string){
+
         try{
 
             const data = await TORMainRepository.GetDataPerCoopIdAndDateRange(coopId, fromDate, toDate)
@@ -234,6 +235,7 @@ class TORMainService{
             console.error(`Error in services: ${e}`);
             return {status: 500, message: e, response: {}}
         }
+        
     }
 
     async GetDataPerCoopId(coopId: string){
@@ -268,7 +270,6 @@ class TORMainService{
                     }
                 }
         
-                
                 const bodyParameters = {
                     "query": [{"remarks" : "test"}, {"remarks" : "live"}]
                 }
@@ -298,6 +299,25 @@ class TORMainService{
                     console.error("Error in service: "+e);
                     return false;
                 }
+
+    }
+
+    async UpdateDateRemittedById(id : string,  dateRemitted: Date){
+
+         try {
+         
+            const data = await TORMainRepository.UpdateDateRemittedById(id, dateRemitted);
+
+            if(data !== null){
+                return {status: 0, message: "OK", response: data}
+            }else{
+                return {status: 1, message: "Invalid Fields", response: {}}
+            }
+
+        } catch (e) {
+            console.error(`Error in services: ${e}`);
+            return {status: 500, message: e, response: {}}
+        }
 
     }
 
@@ -376,12 +396,6 @@ class TORMainService{
     async CreateTORMainService(fieldData : ITORMAIN) {
 
         try{
-            // const torMain ={
-            //     portalData: [],
-            //     recordId: "",
-            //     modId: "",
-            //     fieldData: fieldData.fieldData,
-            // }
 
             const newTorMain = TORMainRepository.CreateNewTORMain(fieldData);
             return true;
@@ -459,9 +473,10 @@ class TORMainService{
     }
 
 
-
-
     
+
+    /////////////////////////////////////
+    //////          SYNC
     /////////////////////////////////////
  
     async GenerateSession(){
@@ -526,9 +541,8 @@ class TORMainService{
             console.log(`Coop id: ${coopId}`)
             try{
     
-                const data = await TORMainRepository.GetDataIsNotUploaded(coopId);
+                const data = await TORMainRepository.GetDataPerCoopId(coopId);
     
-                
                 console.log(`TORS : ${data}`)
     
                 if(data !== null){
@@ -688,6 +702,8 @@ class TORMainService{
             }
     
         }
+
+        
 
     
 

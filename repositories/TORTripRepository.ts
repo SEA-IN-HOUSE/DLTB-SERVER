@@ -257,7 +257,7 @@ class TORTripRepository{
             const data: any = await TORTripModel.find({
                 $or: [
                     { "fieldData.isUploaded": { $exists: false } },
-                    { "fieldData.isUploaded": { $in: [null] } },
+                    { "fieldData.isUploaded": { $in: [null, false] } },
                 ],
                 "fieldData.coopId": coopId,
             });

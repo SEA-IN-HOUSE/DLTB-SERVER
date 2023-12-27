@@ -143,7 +143,7 @@ class TORViolationService{
             console.log(`Coop id: ${coopId}`)
             try{
     
-                const data = await TORViolationRepository.GetDataIsNotUploaded(coopId);
+                const data = await TORViolationRepository.GetDataPerCoopId(coopId)
     
                 
                 console.log(`TORS : ${data}`)

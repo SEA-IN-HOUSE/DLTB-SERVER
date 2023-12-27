@@ -38,25 +38,25 @@ const cooperativeSchema = new mongoose.Schema({
 
     minimumFare:{
         type: Number,
-        required: true,
+        required: false,
         index: true,
     },
     
     first_km:{
         type : Number,
-        required: true,
+        required: false,
         index: true,
     },
 
     pricePerKm:{
         type: Number,
-        required: true,
+        required: false,
         index: true,
     },
 
     discountPercent:{
         type: Number,
-        required: true,
+        required: false,
         index: true
     },
 

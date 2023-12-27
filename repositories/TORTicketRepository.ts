@@ -30,6 +30,7 @@ export interface ITORTicket{
         long: string,
         created_on: Date,
         updated_on: Date,
+        additionalFareCardType: string,
         previous_balance: number,
         current_balance: number
    
@@ -133,7 +134,7 @@ class TORTicketRepository{
 
     }
     
-    async FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare : number , currentBalance : number, previousBalance: number, ticketNo : string) {
+    async FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare : number , currentBalance : number, previousBalance: number, ticketNo : string, additionalFareCardType : string) {
         try {
             // Find the document based on ticket_no
             const filter = { ticket_no: ticketNo };
@@ -144,6 +145,7 @@ class TORTicketRepository{
                 "additionalFare": additionalFare,
                 "current_balance": currentBalance,
                 "previous_balance": previousBalance,
+                "additionalFareCardType": additionalFareCardType
                 }
             };
     

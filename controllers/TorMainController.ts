@@ -286,3 +286,34 @@ export async function SyncToFileMakerTORMainController(request: Request, respons
  
 
 }
+
+
+export async function UpdateTorMainRemittedDateByIdController(request: Request, response : Response){
+
+    try{
+
+        const updateTORMain = await TORMainService.UpdateDateRemittedById(request.params.id, request.body.dateRemitted)
+ 
+         response.status(200).json({messages : [{
+             code: updateTORMain.status,
+             message: updateTORMain.message,
+             dateTime: GetCurrentDateSTR(),
+         }],
+         response: {}
+         });
+     }catch(e){
+         console.error("Error in tor main controller: "+e)
+         response.status(500).json({messages : [{
+             code: "212",
+             message: "Error in syncing tors: "+e,
+             dateTime: GetCurrentDateSTR(),
+             }],
+             response: {}
+         })
+     }
+ 
+
+}
+
+
+// 

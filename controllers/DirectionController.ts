@@ -129,3 +129,63 @@ export async function GetDirectionByCoopIdAndFilterController(request : Request,
     }
 
 }
+
+
+export async function UpdateDirectionByIdController(request: Request, response : Response){
+
+    
+    try{
+        const data = await DirectionService.UpdateById(request.params.id, request.body);
+        response.status(200).json({messages : [{
+            code: data.status,
+            message: data.message,
+            dateTime: GetCurrentDateSTR(),
+            }],
+            response : data.response
+        })
+    
+    
+       
+    
+    }catch(e){
+        response.status(500).json({messages : [{
+            code: "212",
+            message: "Error in getting all employees: "+e,
+            dateTime: GetCurrentDateSTR(),
+        }],
+        response:{}
+    });
+    }
+    
+    }
+
+
+    
+export async function DeleteDirectionByIdController(request: Request, response : Response){
+
+    
+    try{
+        console.log(`PARAMS ID: ${request.params.id}`)
+        const data = await DirectionService.DeleteById(request.params.id);
+        response.status(200).json({messages : [{
+            code: data.status,
+            message: data.message,
+            dateTime: GetCurrentDateSTR(),
+            }],
+            response : data.response
+        })
+    
+    
+       
+    
+    }catch(e){
+        response.status(500).json({messages : [{
+            code: "212",
+            message: "Error in getting all employees: "+e,
+            dateTime: GetCurrentDateSTR(),
+        }],
+        response:{}
+    });
+    }
+    
+    }

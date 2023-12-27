@@ -274,24 +274,6 @@ class TORMainRepository{
         }
     }
 
-    async UpdateDataPerTorNo(torNo: string, remittedAmount : number){
-        
-        try{
-            console.log(`TOR NO ${torNo}`)
-            console.log(`REMITTED AMOUNT: ${remittedAmount}`)
-
-            const updateData = await TORMainModel.updateOne({"tor_no": torNo}, {"final_remittance": remittedAmount} , {new: true});
-
-            console.log(`Update the data ${JSON.stringify(updateData)}`)
-
-            return updateData.modifiedCount;
-        }catch(e){
-
-            console.error("Error in repository: "+e);
-            return 0;
-        }
-
-    }
 
     async GetDataPerCoopIdAndDateRange(coopId : string, fromDate : string, toDate : string) {
         try {
@@ -365,6 +347,50 @@ class TORMainRepository{
             return null;
         }
     }
+
+  
+
+    
+    async UpdateDataPerTorNo(torNo: string, remittedAmount : number){
+        
+        try{
+            console.log(`TOR NO ${torNo}`)
+            console.log(`REMITTED AMOUNT: ${remittedAmount}`)
+
+            const updateData = await TORMainModel.updateOne({"tor_no": torNo}, {"remitted_amount": remittedAmount} , {new: true});
+
+            console.log(`Update the data ${JSON.stringify(updateData)}`)
+
+            return updateData.modifiedCount;
+        }catch(e){
+
+            console.error("Error in repository: "+e);
+            return 0;
+        }
+
+    }
+
+    async UpdateDateRemittedById( torNo : string, dateRemitted : Date){
+
+        try{
+
+            console.log(`TOR NO ${torNo}`)
+            console.log(`DATE REMITTED: ${dateRemitted}`)
+
+            const updateData = await TORMainModel.updateOne({"tor_no": torNo}, {"dateRemitted": dateRemitted} , {new: true});
+
+            console.log(`Update the data ${JSON.stringify(updateData)}`)
+
+            return updateData.modifiedCount;
+        }catch(e){
+
+            console.error("Error in repository: "+e);
+            return 0;
+        }
+
+    }
+
+
     
     async UpdateIsUploaded(id: string, isUpdate : boolean){
         try {
@@ -400,6 +426,10 @@ class TORMainRepository{
             return false;
         }
     }
+
+    
+    
+    
 }
 
 export default new TORMainRepository();
