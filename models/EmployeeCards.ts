@@ -17,6 +17,12 @@ const employeeCardSchema = new mongoose.Schema({
     cardId:{
         type: String,
         required: true,
+    }, 
+    sNo:{
+        type: String,
+        unique: true,
+        index: true,
+        required: true
     },
 
     createdAt : {

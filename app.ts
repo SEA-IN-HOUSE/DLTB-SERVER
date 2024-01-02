@@ -13,6 +13,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 
+
 import * as http from 'http';
 import { Server } from 'socket.io';
 
@@ -55,6 +56,7 @@ import BalanceTorTicketRouter from "./routes/BalanceTorTicket";
 import ActivityLogRouter from "./routes/ActivityLogRoutes";
 import TransactionReportRouter from "./routes/TransactionReportRoutes";
 import SummaryTicketRouter from "./routes/SummaryTicketRoutes";
+import UploadFileRouter from "./routes/UploadFileRoutes";
 
 
 //////////////////////////////////////////////////
@@ -149,6 +151,8 @@ app.use(urlBackend, ActivityLogRouter);
 app.use(urlBackend, TransactionReportRouter)
 
 app.use(urlBackend, SummaryTicketRouter)
+
+app.use(urlBackend, UploadFileRouter);
 
 /////////////////////////
 // DATABASE CONNECTION

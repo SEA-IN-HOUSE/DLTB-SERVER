@@ -14,6 +14,7 @@ export interface ITransactionReport {
     amount: number,
     total_fee: number,
     status: string,
+    receiptUrl: string,
     remarks: string,
     dateCreated: Date,
 
@@ -88,6 +89,11 @@ const transactionReportSchema = new mongoose.Schema({
         type: String,
         index: true,
         default:"",
+    },
+    receiptUrl: {
+        type: String,
+        index: true,
+        default:""
     },
     transaction_date_and_time_no :{
         type: Date,

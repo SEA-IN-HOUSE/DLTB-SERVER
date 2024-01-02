@@ -14,6 +14,8 @@ export interface IStation extends Document{
     routeId: string
 
     rowNo: number,
+    
+    amount: number,
 }   
 
 const stationSchema = new mongoose.Schema({
@@ -32,13 +34,13 @@ const stationSchema = new mongoose.Schema({
 
     km :{
         type: Number,
-        required: true,
+        required: false,
         index: true
     },
 
     viceVersaKM:{
         type: Number,
-        required: true,
+        required: false,
         index: true
     },
 
@@ -52,6 +54,12 @@ const stationSchema = new mongoose.Schema({
         type: Number,
         required: true,
         index: true,
+    },
+    amount:{
+        type: Number,
+        required: false,
+        default: 0,
+        index: true
     },
 
     createdAt: {

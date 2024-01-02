@@ -93,3 +93,32 @@ export async function AddCooperativeController(request:  Request , response : Re
     }
 
 }
+
+export async function UpdateCooperativeByIdAndCoopIdController( request: Request, response: Response ){
+
+    try{
+
+        const data = await CooperativeService.UpdateById(request.body.id, request.body);
+
+        response.status(200).json({messages : [{
+            code: data.status,
+            message: data.message,
+            dateTime: GetCurrentDateSTR,
+            }],
+            response : data.response
+        })
+
+    }catch(e){
+        
+        console.error("Error in controller: "+e);
+
+        response.status(500).json({messages : [{
+            code: 500,
+            message: "Internal server error: "+e,
+            dateTime: GetCurrentDateSTR,
+            }],
+            response: {}
+        })
+    }
+
+}

@@ -4,6 +4,7 @@ import { IRider } from "../models/RiderModel";
 export interface IEmployeeCard{
     id : string,
     coopId: string,
+    sNo: string,
     empNo : string,
     cardId : string, 
 
@@ -47,19 +48,28 @@ class EmployeeCardRepository{
 
     async RegisterEmployeeCard( employeeCard : IEmployeeCard){
 
-
-        try{
-
-            const newEmployeeCard = new EmployeeCardModel(employeeCard);
-
-            const saveNewEmployeeCard = await newEmployeeCard.save();
-            
-            return saveNewEmployeeCard;
-            
-        }catch(e){
-            console.error("Error in employee repository: "+e)
-            return e
-        }
+        try {
+        
+              const getData = (await EmployeeCardModel.find({})).length + 1;
+              const lastString = `000${getData}`.slice(-4); // Ensure the last 4 characters
+      
+              const currentYear = new Date().getFullYear();
+  
+              // SNO EXAMPLE = SNMC2023-0001
+              const newSNo = `SNMC${currentYear}-${lastString}`;
+  
+              employeeCard.sNo = newSNo;
+  
+              const newMasterCard = new EmployeeCardModel(employeeCard);
+  
+              const saveMasterCard = await newMasterCard.save();
+  
+              return true;
+         
+      } catch (e) {
+          console.error("Error in repository: " + e);
+          return null;
+      }
 
     }
   

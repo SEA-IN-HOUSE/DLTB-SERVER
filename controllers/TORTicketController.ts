@@ -101,7 +101,6 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
                 const _newBalance : any = updateRiderWallet.response.newBalance;
                 const _previousBalance : any  = updateRiderWallet.response.previousBalance;
                 const _ticketNo : any = request.body.items.ticket_no;
-<<<<<<< HEAD
                 const _additionalFareCardType : any = request.body.items.additionalFareCardType;
                 // newData.previous_balance = updateRiderWallet.response.previousBalance;
                 // newData.current_balance = updateRiderWallet.response.newBalance;
@@ -110,10 +109,6 @@ export async function UpdateTORTicketPerTicketNoController(request : Request, re
                 
 
                 const data : any = await TORTicketServices.FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare,  _newBalance, _previousBalance, _ticketNo,_additionalFareCardType)
-=======
- 
-                const data : any = await TORTicketServices.FindOneAndUpdateAdditionalFareAndCurrentBalance(additionalFare,  _newBalance, _previousBalance, _ticketNo)
->>>>>>> 045945ef34acdb2e5431434c21c05fd9809d71d8
 
                 if(data.status === 0){
 

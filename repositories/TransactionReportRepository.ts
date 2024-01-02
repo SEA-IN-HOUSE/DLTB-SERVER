@@ -39,9 +39,11 @@ class TransactionReportRepository{
         }
     }
 
-    async AddData(data : ITransactionReport){
+    async AddData(data : ITransactionReport, receiptUrl : string){
 
         try{
+            
+            data.receiptUrl = receiptUrl;
             
             const newData = new TransactionReportModel(data);
 

@@ -1,0 +1,1 @@
+[{"_id":{"$oid":"6530ef5e97ee9eee67ee7d8b"},"coopName":"DLTB Coop","designation":"LUCENA","torNo":"123-45678-9012","otNo":"1234567890000012","atm":"PP352/190300749","date":{"$date":"2023-10-19T08:56:56.937Z"},"tripNo":"1","bound":"SOUTH","route":"LRT - LUCENA","driverName":"TEST","conductorName":"TEST","dispatcherName":"TEST","trip":"TEST","__v":0}]

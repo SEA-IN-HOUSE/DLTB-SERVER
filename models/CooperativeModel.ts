@@ -14,6 +14,8 @@ export interface ICooperative extends Document{
     
     discountPercent: number,
 
+    isNumeric: boolean,
+
     createdAt: Date,
 
 }
@@ -56,6 +58,12 @@ const cooperativeSchema = new mongoose.Schema({
 
     discountPercent:{
         type: Number,
+        required: false,
+        index: true
+    },
+
+    isNumeric:{
+        type: Boolean,
         required: false,
         index: true
     },

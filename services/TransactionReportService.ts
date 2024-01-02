@@ -22,11 +22,11 @@ class TransactionReportService{
 
     }
 
-    async AddData(data : ITransactionReport){
+    async AddData(data : ITransactionReport, receiptUrl: string){
 
         try{
 
-            const newData : any = await TransactionReportRepository.AddData(data)
+            const newData : any = await TransactionReportRepository.AddData(data, receiptUrl)
             
             console.log(`New transaction data ${newData}`)
             if(newData.code !== 11000 && newData !== null){

@@ -36,25 +36,29 @@ const directionSchema = new mongoose.Schema({
     minimum_fare:{
         type: Number,
         index: true,
-        required: true
+        default:0,
+        required: false
     },
 
     discount:{
         type: Number,
         index: true,
-        required: true
+        default:0,
+        required: false
     },
 
     pricePerKM:{
         type: Number,
         index: true,
-        required: true
+        default:0,
+        required: false
     },
 
     first_km:{
         type: Number,
         index: true,
-        required: true
+        default:0,
+        required: false
     },
 
     createdAt:{

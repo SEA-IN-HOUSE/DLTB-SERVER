@@ -59,6 +59,26 @@ class CooperativeService{
         }
     }
 
+    async UpdateById(id: string, newData : any){
+
+        try{
+
+            const data = await CooperativeRepository.UpdateById(id , newData);
+
+            if(data === true){
+                return {status: 0, message: "OK", response: data}
+            }else{
+                return {status: 1, message: "Invalid Fields", response: data}
+            }
+
+        }catch(e){
+
+            console.log(`Error in service: ${e}`);
+            return {status: 500, message: e, response: {}}
+      
+        }
+    }
+
 }
 
 export default new CooperativeService()

@@ -49,6 +49,28 @@ class CooperativeRepository{
         }
     }
 
+    async  UpdateById(id: string, newData : any) {
+        try {
+         
+            // Use updateOne to update a single document that matches the criteria
+            const result = await CooperativeModel.updateOne(
+                { _id : id },
+                { $set: newData }
+            );
+    
+            // Check if any documents were matched and updated
+            if (result.modifiedCount > 0) {
+                return true;
+            } else {
+               
+                return false;
+            }
+        } catch (e) {
+            console.error("Repository error: " + e);
+            return false;
+        }
+      }
+
 
     
 
